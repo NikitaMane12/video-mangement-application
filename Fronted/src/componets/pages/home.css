@@ -1,0 +1,14 @@
+.carousel-item img {
+  max-height: 500px;
+  object-fit: cover;
+  margin-top: "200px";
+}
+
+.carousel-caption h5 {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.carousel-caption p {
+  font-size: 1.2rem;
+}
