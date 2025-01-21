@@ -1,36 +1,45 @@
-import { useState } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Login.css";
+import axios from "axios";
+import "./login.css";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [users, setUsers] = useState([]);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get(
+          "https://api.escuelajs.co/api/v1/users"
+        );
+        setUsers(response.data); // Save user data in state
+      } catch (error) {
+        console.error("Error fetching users:", error);
+        alert("Failed to fetch user data. Please try again later.");
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+  const handleSubmit = (e) => {
     e.preventDefault();
 
-    try {
-      console.log("Login attempt:", { email, password });
-      const res = await axios.post("http://localhost:5000/api/login", {
-        email,
-        password,
-      });
-      console.log("Response from backend:", res.data);
+    const user = users.find(
+      (u) => u.email === email && u.password === password
+    );
 
-      if (res.data.token) {
-        localStorage.setItem("token", res.data.token);
-        alert("Login successful!");
-        navigate("/VideoPage");
-      } else {
-        alert("Login failed: No token provided");
-      }
-    } catch (error) {
-      console.error("Login error:", error.response || error);
-      const errorMessage =
-        error.response?.data?.message || "An error occurred. Please try again.";
-      alert(errorMessage);
+    if (user) {
+      console.log("Login successful!", user);
+      localStorage.setItem("token", "mockToken123");
+      alert(`Welcome, ${user.name}!`);
+      navigate("/VideoPage");
+    } else {
+      console.error("Login failed: Invalid email or password");
+      alert("Invalid email or password");
     }
   };
 

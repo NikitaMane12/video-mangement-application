@@ -18,12 +18,22 @@ const Register = () => {
     }
 
     try {
-      console.log("Request payload:", { email, password }); // Debugging
-      const res = await axios.post("http://localhost:5000/api/register", {
+      const payload = {
         email,
         password,
-      });
-      alert("Registration successful!");
+        name: email.split("@")[0],
+        avatar: `https://api.dicebear.com/6.x/identicon/svg?seed=${email}`,
+      };
+
+      console.log("Request payload:", payload);
+
+      const res = await axios.post(
+        "https://api.escuelajs.co/api/v1/users/",
+        payload
+      );
+      console.log("Response from API:", res.data);
+
+      alert("Registration successful! Please log in.");
       navigate("/login");
     } catch (error) {
       console.error("Error during registration:", error);
